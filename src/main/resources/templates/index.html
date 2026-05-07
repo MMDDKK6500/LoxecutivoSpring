@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Garagem</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+<div class="container">
+
+    <h2>Cadastrar Endereco</h2>
+
+    <form th:action="@{/enderecos}" th:object="${endereco}" method="post" class="form-grid">
+
+        <input type="hidden" th:field="*{id}">
+
+        <label for="placa"> Placa: </label>
+        <input type="text" id="placa" th:field="*{placa}" required>
+        <span th:if="${#fields.hasErrors('placa')}" th:errors="*{placa}" class="error"></span>
+
+        <label for="veiculo"> Veículo:</label>
+        <input type="text" id="veiculo" th:field="*{veiculo}" required>
+        <span th:if="${#fields.hasErrors('veiculo')}" th:errors="*{veiculo}" class="error"></span>
+
+        <label for="data"> Data:</label>
+        <input type="date" id="data" th:field="*{data}" required>
+        <span th:if="${#fields.hasErrors('data')}" th:errors="*{data}" class="error"></span>
+
+        <label for="hentrada"> Hora Entrada: </label>
+        <input type="time" id="hentrada" th:field="*{hentrada}" required>
+        <span th:if="${#fields.hasErrors('hentrada')}" th:errors="*{hentrada}" class="error"></span>
+
+        <label for="hsaida"> Hora Saída:</label>
+        <input type="time" id="hsaida" th:field="*{hsaida}" required>
+        <span th:if="${#fields.hasErrors('hsaida')}" th:errors="*{hsaida}" class="error"></span>
+
+        <label for="valor"> Valor: </label>
+        <input type="text" id="valor" th:field="*{valor}" required>
+        <span th:if="${#fields.hasErrors('valor')}" th:errors="*{valor}" class="error"></span>
+
+        <div class="form-botoes">
+
+            <button type="submit" class="botao-link" onclick="confirmarAtualizacao(event)"> Salvar Vaga</button>
+
+            <a th:href="@{/endereco}" class="botao-link"> Ver Lista</a>
+
+            <button type="reset" class="botao-link botao-limpar"> Limpar</button>
+
+        </div>
+
+    </form>
+
+</div>
+
+<script th:if="${mensagem != null}">
+    Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: '[[${mensagem}]]',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true
+    });
+</script>
+
+<script>
+    function confirmarAtualizacao (event) {
+        const id = document.getElementById("codigo").value;
+        if (parseInt(id) > 0) {
+            const confirmar = confirm("Deseja realmente atualizar os dados desta vaga?");
+            if (!confirmar) {
+                event.preventDefault(); // cancela o envio
+            }
+        }
+    }
+</script>
+
+</body>
+</html>

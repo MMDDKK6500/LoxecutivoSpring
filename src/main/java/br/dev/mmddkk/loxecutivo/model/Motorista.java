@@ -1,0 +1,75 @@
+package br.dev.mmddkk.loxecutivo.model;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+@Entity
+@Table(name = "motoristas")
+public class Motorista {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_motorista", nullable = false)
+    private Integer id;
+
+    @Size(max = 30)
+    @NotNull
+    @Column(name = "nome", nullable = false, length = 30)
+    private String nome;
+
+    @Size(max = 60)
+    @NotNull
+    @Column(name = "sobrenome", nullable = false, length = 60)
+    private String sobrenome;
+
+    @Size(max = 9)
+    @NotNull
+    @Column(name = "rg", nullable = false, length = 9)
+    private String rg;
+
+    @Size(max = 11)
+    @NotNull
+    @Column(name = "cpf", nullable = false, length = 11)
+    private String cpf;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getSobrenome() {
+        return sobrenome;
+    }
+
+    public void setSobrenome(String sobrenome) {
+        this.sobrenome = sobrenome;
+    }
+
+    public String getRg() {
+        return rg;
+    }
+
+    public void setRg(String rg) {
+        this.rg = rg;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+}
