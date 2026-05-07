@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Cadastro de Evento</title>
+</head>
+<body>
+<h1 th:text="${evento.id} != null ? 'Editar Evento' : 'Novo Evento'"></h1>
+
+<form th:action="@{${evento.id} != null ? '/eventos/atualizar/' + ${evento.id} : '/eventos'}"
+      th:object="${evento}" method="post">
+
+    <label for="nome">Nome:</label>
+    <input type="text" id="nome" th:field="*{nome}" />
+    <div th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>
+
+    <label for="idEndereco">Endereço:</label>
+    <select id="idEndereco" th:field="*{idEndereco}">
+        <option th:each="endereco : ${enderecos}"
+                th:value="${endereco.id}"
+                th:text="${endereco.rua + ', ' + endereco.numero + ' - ' + endereco.bairro + ', ' + endereco.cidade + ' - ' + endereco.uf}"
+        ></option>
+    </select>
+    <div th:if="${#fields.hasErrors('idEndereco')}" th:errors="*{idEndereco}"></div>
+
+    <button type="submit">Salvar</button>
+    <a th:href="@{/eventos}">Cancelar</a>
+</form>
+</body>
+</html>

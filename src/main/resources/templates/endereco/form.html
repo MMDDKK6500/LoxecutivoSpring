@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Cadastro de Endereço</title>
+</head>
+<body>
+<h1 th:text="${endereco.id} != null ? 'Editar Endereço' : 'Novo Endereço'"></h1>
+<form th:action="@{${endereco.id} != null ? '/enderecos/atualizar/' + ${endereco.id} : '/enderecos'}" th:object="${endereco}" method="post">
+
+    <label for="rua">Rua:</label>
+    <input type="text" id="rua" th:field="*{rua}"/>
+    <div th:if="${#fields.hasErrors('rua')}" th:errors="*{rua}"></div>
+
+    <label for="numero">Número:</label>
+    <input type="number" id="numero" th:field="*{numero}"/>
+    <div th:if="${#fields.hasErrors('numero')}" th:errors="*{numero}"></div>
+
+    <label for="bairro">Bairro:</label>
+    <input type="text" id="bairro" th:field="*{bairro}"/>
+    <div th:if="${#fields.hasErrors('bairro')}" th:errors="*{bairro}"></div>
+
+    <label for="cidade">Cidade:</label>
+    <input type="text" id="cidade" th:field="*{cidade}"/>
+    <div th:if="${#fields.hasErrors('cidade')}" th:errors="*{cidade}"></div>
+
+    <label for="uf">UF:</label>
+    <input type="text" id="uf" th:field="*{uf}"/>
+    <div th:if="${#fields.hasErrors('uf')}" th:errors="*{uf}"></div>
+
+    <button type="submit">Salvar</button>
+    <a th:href="@{/enderecos}">Cancelar</a>
+</form>
+</body>
+</html>

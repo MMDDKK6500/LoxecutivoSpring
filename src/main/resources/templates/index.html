@@ -12,46 +12,39 @@
 
     <h2>Cadastrar Endereco</h2>
 
-    <form th:action="@{/enderecos}" th:object="${endereco}" method="post" class="form-grid">
+    <form th:object="${endereco}" method="post" class="form-grid">
 
         <input type="hidden" th:field="*{id}">
 
-        <label for="placa"> Placa: </label>
-        <input type="text" id="placa" th:field="*{placa}" required>
-        <span th:if="${#fields.hasErrors('placa')}" th:errors="*{placa}" class="error"></span>
+        <label for="rua"> rua: </label>
+        <input type="text" id="rua" th:field="*{rua}" required>
+        <span th:if="${#fields.hasErrors('rua')}" th:errors="*{rua}" class="error"></span>
 
-        <label for="veiculo"> Veículo:</label>
-        <input type="text" id="veiculo" th:field="*{veiculo}" required>
-        <span th:if="${#fields.hasErrors('veiculo')}" th:errors="*{veiculo}" class="error"></span>
+        <label for="numero"> número:</label>
+        <input type="text" id="numero" th:field="*{numero}" required>
+        <span th:if="${#fields.hasErrors('numero')}" th:errors="*{numero}" class="error"></span>
 
-        <label for="data"> Data:</label>
-        <input type="date" id="data" th:field="*{data}" required>
-        <span th:if="${#fields.hasErrors('data')}" th:errors="*{data}" class="error"></span>
+        <label for="bairro"> bairro:</label>
+        <input type="text" id="bairro" th:field="*{bairro}" required>
+        <span th:if="${#fields.hasErrors('bairro')}" th:errors="*{bairro}" class="error"></span>
 
-        <label for="hentrada"> Hora Entrada: </label>
-        <input type="time" id="hentrada" th:field="*{hentrada}" required>
-        <span th:if="${#fields.hasErrors('hentrada')}" th:errors="*{hentrada}" class="error"></span>
+        <label for="cidade"> cidade: </label>
+        <input type="text" id="cidade" th:field="*{cidade}" required>
+        <span th:if="${#fields.hasErrors('cidade')}" th:errors="*{cidade}" class="error"></span>
 
-        <label for="hsaida"> Hora Saída:</label>
-        <input type="time" id="hsaida" th:field="*{hsaida}" required>
-        <span th:if="${#fields.hasErrors('hsaida')}" th:errors="*{hsaida}" class="error"></span>
-
-        <label for="valor"> Valor: </label>
-        <input type="text" id="valor" th:field="*{valor}" required>
-        <span th:if="${#fields.hasErrors('valor')}" th:errors="*{valor}" class="error"></span>
+        <label for="uf"> Hora Saída:</label>
+        <input type="text" id="uf" th:field="*{uf}" required>
+        <span th:if="${#fields.hasErrors('uf')}" th:errors="*{uf}" class="error"></span>
 
         <div class="form-botoes">
 
-            <button type="submit" class="botao-link" onclick="confirmarAtualizacao(event)"> Salvar Vaga</button>
-
-            <a th:href="@{/endereco}" class="botao-link"> Ver Lista</a>
+            <button type="submit" class="botao-link"> Salvar Vaga</button>
 
             <button type="reset" class="botao-link botao-limpar"> Limpar</button>
 
         </div>
 
     </form>
-
 </div>
 
 <script th:if="${mensagem != null}">
@@ -67,15 +60,16 @@
 </script>
 
 <script>
-    function confirmarAtualizacao (event) {
-        const id = document.getElementById("codigo").value;
-        if (parseInt(id) > 0) {
-            const confirmar = confirm("Deseja realmente atualizar os dados desta vaga?");
-            if (!confirmar) {
-                event.preventDefault(); // cancela o envio
-            }
-        }
-    }
+    const form = document.querySelector("form");
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const data = Object.fromEntries(new FormData(form));
+        await fetch("/enderecos", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+    });
 </script>
 
 </body>

@@ -1,4 +1,4 @@
-package br.dev.mmddkk.loxecutivo.view;
+package br.dev.mmddkk.loxecutivo.controller;
 
 import br.dev.mmddkk.loxecutivo.model.Endereco;
 import org.springframework.stereotype.Controller;
