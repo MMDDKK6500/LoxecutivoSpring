@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Cadastro de Motorista</title>
+</head>
+<body>
+
+<h1 th:text="${motorista.id} != null ? 'Editar Motorista' : 'Novo Motorista'"></h1>
+
+<form th:action="@{${motorista.id} != null ? '/motoristas/atualizar/' + ${motorista.id} : '/motoristas'}"
+      th:object="${motorista}"
+      method="post">
+
+    <label for="nome">Nome:</label>
+    <input type="text" id="nome" th:field="*{nome}" required/>
+    <div th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>
+
+    <label for="sobrenome">Sobrenome:</label>
+    <input type="text" id="sobrenome" th:field="*{sobrenome}" required/>
+    <div th:if="${#fields.hasErrors('sobrenome')}" th:errors="*{sobrenome}"></div>
+
+    <label for="rg">RG:</label>
+    <input type="text" id="rg" th:field="*{rg}" required/>
+    <div th:if="${#fields.hasErrors('rg')}" th:errors="*{rg}"></div>
+
+    <label for="cpf">CPF:</label>
+    <input type="text" id="cpf" th:field="*{cpf}" required/>
+    <div th:if="${#fields.hasErrors('cpf')}" th:errors="*{cpf}"></div>
+
+    <button type="submit">Salvar</button>
+    <a th:href="@{/motoristas}">Cancelar</a>
+
+</form>
+
+</body>
+</html>

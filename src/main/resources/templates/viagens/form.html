@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Cadastro de Viagem</title>
+</head>
+<body>
+
+<h1 th:text="${viagem.id} != null ? 'Editar Viagem' : 'Nova Viagem'"></h1>
+
+<form th:action="@{${viagem.id} != null ? '/viagens/atualizar/' + ${viagem.id} : '/viagens'}"
+      th:object="${viagem}"
+      method="post">
+
+    <label for="localDeOrigem">Local de Origem:</label>
+    <select id="localDeOrigem" th:field="*{localDeOrigem}" required>
+        <option value="">Selecione o endereço</option>
+        <option th:each="endereco : ${enderecos}"
+                th:value="${endereco.id}"
+                th:text="${endereco.rua}">
+        </option>
+    </select>
+    <div th:if="${#fields.hasErrors('localDeOrigem')}" th:errors="*{localDeOrigem}"></div>
+
+    <label for="localDeDestino">Local de Destino:</label>
+    <select id="localDeDestino" th:field="*{localDeDestino}" required>
+        <option value="">Selecione o endereço</option>
+        <option th:each="endereco : ${enderecos}"
+                th:value="${endereco.id}"
+                th:text="${endereco.rua}">
+        </option>
+    </select>
+    <div th:if="${#fields.hasErrors('localDeDestino')}" th:errors="*{localDeDestino}"></div>
+
+    <label for="idMotorista">Motorista:</label>
+    <select id="idMotorista" th:field="*{idMotorista}" required>
+        <option value="">Selecione o motorista</option>
+        <option th:each="motorista : ${motoristas}"
+                th:value="${motorista.id}"
+                th:text="${motorista.nome}">
+        </option>
+    </select>
+    <div th:if="${#fields.hasErrors('idMotorista')}" th:errors="*{idMotorista}"></div>
+
+    <label for="idVeiculo">Veículo:</label>
+    <select id="idVeiculo" th:field="*{idVeiculo}" required>
+        <option value="">Selecione o Veiculo</option>
+        <option th:each="veiculo : ${veiculos}"
+                th:value="${veiculo.idPlaca}"
+                th:text="${veiculo.modelo}">
+        </option>
+    </select>
+    <div th:if="${#fields.hasErrors('idVeiculo')}" th:errors="*{idVeiculo}"></div>
+
+    <label for="idEvento">Evento:</label>
+    <select id="idEvento" th:field="*{idEvento}" required>
+        <option value="">Selecione um evento</option>
+        <option th:each="evento : ${eventos}"
+                th:value="${evento.id}"
+                th:text="${evento.nome}">
+        </option>
+    </select>
+
+    <button type="submit">Salvar</button>
+    <a th:href="@{/viagens}">Cancelar</a>
+
+</form>
+
+</body>
+</html>

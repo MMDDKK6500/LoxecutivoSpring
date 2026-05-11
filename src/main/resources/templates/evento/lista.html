@@ -9,7 +9,6 @@
 <table border="1">
     <thead>
     <tr>
-        <th>ID</th>
         <th>Nome</th>
         <th>Endereço</th>
         <th>Ações</th>
@@ -17,7 +16,6 @@
     </thead>
     <tbody>
     <tr th:each="evento : ${eventos}">
-        <td th:text="${evento.id}"></td>
         <td th:text="${evento.nome}"></td>
         <td th:text="${evento.idEndereco.rua + ', ' + evento.idEndereco.numero + ' - '
             + evento.idEndereco.bairro + ', ' + evento.idEndereco.cidade + ' - '

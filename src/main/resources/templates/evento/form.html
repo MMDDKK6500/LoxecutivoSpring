@@ -10,11 +10,11 @@
       th:object="${evento}" method="post">
 
     <label for="nome">Nome:</label>
-    <input type="text" id="nome" th:field="*{nome}" />
+    <input type="text" id="nome" th:field="*{nome}" required/>
     <div th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>
 
     <label for="idEndereco">Endereço:</label>
-    <select id="idEndereco" th:field="*{idEndereco}">
+    <select id="idEndereco" th:field="*{idEndereco}" required>
         <option th:each="endereco : ${enderecos}"
                 th:value="${endereco.id}"
                 th:text="${endereco.rua + ', ' + endereco.numero + ' - ' + endereco.bairro + ', ' + endereco.cidade + ' - ' + endereco.uf}"
