@@ -1,76 +1,58 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Garagem</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-</head>
-<body>
-<div class="container">
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" th:href="@{/css/style.css}">
+        <title>Navbar + Sidebar Layout</title>
+    </head>
 
-    <h2>Cadastrar Endereco</h2>
+    <body>
 
-    <form th:object="${endereco}" method="post" class="form-grid">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <h2>Menu</h2>
 
-        <input type="hidden" th:field="*{id}">
+<!--        <form th:action="@{${evento.id} != null ? '/eventos/atualizar/' + ${evento.id} : '/eventos'}"-->
+<!--              th:object="${evento}" method="post">-->
 
-        <label for="rua"> rua: </label>
-        <input type="text" id="rua" th:field="*{rua}" required>
-        <span th:if="${#fields.hasErrors('rua')}" th:errors="*{rua}" class="error"></span>
+<!--            <label for="nome">Nome:</label>-->
+<!--            <input type="text" id="nome" th:field="*{nome}" required/>-->
+<!--            <div th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>-->
 
-        <label for="numero"> número:</label>
-        <input type="text" id="numero" th:field="*{numero}" required>
-        <span th:if="${#fields.hasErrors('numero')}" th:errors="*{numero}" class="error"></span>
+<!--            <label for="idEndereco">Endereço:</label>-->
+<!--            <select id="idEndereco" th:field="*{idEndereco}" required>-->
+<!--                <option th:each="endereco : ${enderecos}"-->
+<!--                        th:value="${endereco.id}"-->
+<!--                        th:text="${endereco.rua + ', ' + endereco.numero + ' - ' + endereco.bairro + ', ' + endereco.cidade + ' - ' + endereco.uf}"-->
+<!--                ></option>-->
+<!--            </select>-->
+<!--            <div th:if="${#fields.hasErrors('idEndereco')}" th:errors="*{idEndereco}"></div>-->
 
-        <label for="bairro"> bairro:</label>
-        <input type="text" id="bairro" th:field="*{bairro}" required>
-        <span th:if="${#fields.hasErrors('bairro')}" th:errors="*{bairro}" class="error"></span>
+<!--            <button type="submit">Salvar</button>-->
+<!--            <a th:href="@{/eventos}">Cancelar</a>-->
+<!--        </form>-->
+    </aside>
 
-        <label for="cidade"> cidade: </label>
-        <input type="text" id="cidade" th:field="*{cidade}" required>
-        <span th:if="${#fields.hasErrors('cidade')}" th:errors="*{cidade}" class="error"></span>
+    <!-- Main Section -->
+    <div class="main">
 
-        <label for="uf"> Hora Saída:</label>
-        <input type="text" id="uf" th:field="*{uf}" required>
-        <span th:if="${#fields.hasErrors('uf')}" th:errors="*{uf}" class="error"></span>
+        <!-- Top Navbar -->
+        <nav class="navbar">
+            <div class="logo">MySite</div>
 
-        <div class="form-botoes">
+            <div class="search-box">
+                <input type="text" placeholder="Search..." />
+            </div>
+        </nav>
 
-            <button type="submit" class="botao-link"> Salvar Vaga</button>
+        <!-- Content -->
+        <section class="content">
+            <h1>Welcome</h1>
+            <p>Your page content goes here.</p>
+        </section>
 
-            <button type="reset" class="botao-link botao-limpar"> Limpar</button>
+    </div>
 
-        </div>
-
-    </form>
-</div>
-
-<script th:if="${mensagem != null}">
-    Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: 'success',
-        title: '[[${mensagem}]]',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true
-    });
-</script>
-
-<script>
-    const form = document.querySelector("form");
-    form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const data = Object.fromEntries(new FormData(form));
-        await fetch("/enderecos", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
-        });
-    });
-</script>
-
-</body>
+    </body>
 </html>
