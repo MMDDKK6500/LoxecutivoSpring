@@ -65,7 +65,11 @@ public class IndexController {
 
         mv.addObject("novoVeiculo", new Veiculo());
         mv.addObject("novaViagem", new Viagens());
-        mv.addObject("novoPassageiro", new Passageiro());
+
+        Passageiro pass = new Passageiro();
+        pass.setEmpresa("Nenhuma");
+        mv.addObject("novoPassageiro", pass);
+
         mv.addObject("novoMotorista", new Motorista());
         mv.addObject("novoEndereco", new Endereco());
 

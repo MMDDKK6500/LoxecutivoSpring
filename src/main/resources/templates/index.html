@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <title>Gestão de Eventos</title>
 </head>
 <body>
@@ -89,9 +90,6 @@
 <div class="main">
     <nav class="navbar">
         <div class="logo">MySite</div>
-        <div class="search-box">
-            <input type="text" placeholder="Search..." />
-        </div>
     </nav>
 
     <section class="content">
@@ -100,7 +98,9 @@
             <div class="card">
                 <div class="card-header">
                     <h3>Viagens do Evento</h3>
-                    <button type="button" th:if="${evento.id != null}" onclick="openModal('modalViagem')" class="btn-sm btn-add" title="Adicionar Viagem">+ Nova</button>
+                    <button type="button" th:if="${evento.id != null}" onclick="openModal('modalViagem')" class="btn-sm btn-add" title="Adicionar Viagem">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
                 </div>
 
                 <ul class="item-list">
@@ -114,8 +114,12 @@
                         </a>
 
                         <div class="item-actions">
-                            <a th:href="@{/viagens/editar/{id}(id=${v.id})}" title="Editar">✏️</a>
-                            <a th:href="@{/viagens/deletar/{id}(id=${v.id})}" title="Remover" onclick="return confirm('Excluir esta viagem?');">🗑️</a>
+                            <a th:href="@{/viagens/editar/{id}(id=${v.id})}" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a th:href="@{/viagens/deletar/{id}(id=${v.id})}" title="Remover" onclick="return confirm('Excluir esta viagem?');">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
                         </div>
                     </li>
 
@@ -128,7 +132,9 @@
             <div class="card">
                 <div class="card-header">
                     <h3>Passageiros</h3>
-                    <button type="button" th:if="${viagemSelecionada != null}" onclick="openModal('modalPassageiro')" class="btn-sm btn-add" title="Adicionar Passageiro">+ Novo</button>
+                    <button type="button" th:if="${viagemSelecionada != null}" onclick="openModal('modalPassageiro')" class="btn-sm btn-add" title="Adicionar Passageiro">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
                 </div>
 
                 <div th:if="${viagemSelecionada == null}" class="placeholder">
@@ -143,8 +149,12 @@
                         </div>
 
                         <div class="item-actions">
-                            <a th:href="@{/passageiros/editar/{id}(id=${p.id})}" title="Editar">✏️</a>
-                            <a th:href="@{/passageiros/deletar/{id}(id=${p.id})}" title="Remover" onclick="return confirm('Remover passageiro?');">🗑️</a>
+                            <a th:href="@{/passageiros/editar/{id}(id=${p.id})}" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a th:href="@{/passageiros/deletar/{id}(id=${p.id})}" title="Remover" onclick="return confirm('Remover passageiro?');">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
                         </div>
                     </li>
 
@@ -158,8 +168,9 @@
                 <div class="card-header">
                     <h3>Transporte e Rota</h3>
                     <div class="header-actions">
-                        <button th:if="${viagemSelecionada != null}" type="button" onclick="openModal('modalVincularVeiculo')" class="btn-sm btn-edit" title="Mudar Veículo">Vincular</button>
-                        <button type="button" onclick="openModal('modalViagem')" class="btn-sm btn-add" title="Editar Rota">✏️ Rota</button>
+                        <button type="button" onclick="openModal('modalViagem')" class="btn-sm btn-add" title="Editar Rota">
+                            <i class="fas fa-edit"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -174,12 +185,12 @@
                         <div class="route-info">
                             <div class="route-step">
                                 <span class="dot origin"></span>
-                                <p><strong>Origem:</strong> <span th:text="${viagemSelecionada.localDeOrigem}"></span></p>
+                                <p><strong>Origem:</strong> <span th:text="${viagemSelecionada.localDeOrigem.rua + ', ' + viagemSelecionada.localDeOrigem.numero + ' - ' + viagemSelecionada.localDeOrigem.bairro + ',' + viagemSelecionada.localDeOrigem.cidade + ' - ' + viagemSelecionada.localDeOrigem.uf}"></span></p>
                             </div>
                             <div class="route-line"></div>
                             <div class="route-step">
                                 <span class="dot destination"></span>
-                                <p><strong>Destino:</strong> <span th:text="${viagemSelecionada.localDeDestino}"></span></p>
+                                <p><strong>Destino:</strong> <span th:text="${viagemSelecionada.localDeDestino.rua + ', ' + viagemSelecionada.localDeDestino.numero + ' - ' + viagemSelecionada.localDeDestino.bairro + ',' + viagemSelecionada.localDeDestino.cidade + ' - ' + viagemSelecionada.localDeDestino.uf}"></span></p>
                             </div>
                         </div>
                     </div>
@@ -217,6 +228,8 @@
         </div>
     </section>
 </div>
+
+
 
 <!-- modals !-->
 <div id="modalViagem" class="modal-overlay">
@@ -298,8 +311,24 @@
             <input th:if="${viagemSelecionada != null}" type="hidden" name="idViagem.id" th:value="${viagemSelecionada.id}" />
 
             <div class="form-group">
-                <label>Nome Completo:</label>
+                <label>Nome:</label>
                 <input type="text" th:field="*{nome}" required>
+            </div>
+            <div class="form-group">
+                <label>Sobrenome:</label>
+                <input type="text" th:field="*{sobrenome}" required>
+            </div>
+            <div class="form-group">
+                <label>Telefone/Celular:</label>
+                <input type="text" th:field="*{numero}" placeholder="Apenas números" required>
+            </div>
+            <div class="form-group">
+                <label>Empresa:</label>
+                <input type="text" th:field="*{empresa}" placeholder="Caso não tenha uma, deixar em branco">
+            </div>
+            <div class="form-group">
+                <label>RG:</label>
+                <input type="text" th:field="*{rg}" placeholder="Apenas números" required>
             </div>
             <div class="form-group">
                 <label>CPF:</label>
@@ -372,7 +401,7 @@
                     <option th:each="v : ${listaVeiculos}"
                             th:value="${v.idPlaca}"
                             th:text="${v.modelo + ' (' + v.idPlaca + ')'}"
-                            th:selected="${viagemSelecionada?.idVeiculo?.idPlaca == v.idPlaca}">
+                            th:selected="${viagemSelecionada?.idVeiculo == v.idPlaca}">
                     </option>
                 </select>
             </div>
