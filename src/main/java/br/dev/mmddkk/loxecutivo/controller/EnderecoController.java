@@ -34,17 +34,13 @@ public class EnderecoController {
         return mv;
     }
 
-    // ✅ SALVAR NOVO
     @PostMapping
-    public ModelAndView salvar(@Valid @ModelAttribute Endereco endereco,
-                               BindingResult result) {
-
+    public ModelAndView salvar(@Valid @ModelAttribute Endereco endereco, BindingResult result) {
         if (result.hasErrors()) {
             return new ModelAndView("endereco/form");
         }
-
         enderecoRepository.save(endereco);
-        return new ModelAndView("redirect:/enderecos");
+        return new ModelAndView("redirect:/"); // Volta para o Dashboard principal
     }
 
     // ✅ EDITAR

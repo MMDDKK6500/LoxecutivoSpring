@@ -57,7 +57,13 @@
         <!-- Botões -->
         <div class="form-actions">
             <button type="submit" class="btn btn-save">Salvar</button>
-            <a th:href="@{/}" class="btn btn-cancel">Cancelar</a>
+
+            <a th:if="${evento.id != null}"
+               th:href="@{/eventos/deletar/{id}(id=${evento.id})}"
+               class="btn btn-danger"
+               onclick="return confirm('Atenção: Isso excluirá o evento e tudo associado a ele. Confirmar?');">
+                Excluir
+            </a>
         </div>
     </form>
 
@@ -69,7 +75,6 @@
         <label for="listaEventos">Navegar pelos Eventos:</label>
         <select id="listaEventos" onchange="location = this.value;">
             <option value="/">✨ Criar Novo Evento</option>
-            <!-- O th:selected mantém selecionado o evento que você está editando no momento -->
             <option th:each="ev : ${listaEventos}"
                     th:value="@{/{id}(id=${ev.id})}"
                     th:text="${ev.nome}"
@@ -88,11 +93,418 @@
             <input type="text" placeholder="Search..." />
         </div>
     </nav>
+
     <section class="content">
-        <h1>Painel Principal</h1>
-        <p>Selecione um evento na barra lateral ou crie um novo.</p>
+        <div class="dashboard-grid">
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Viagens do Evento</h3>
+                    <button type="button" th:if="${evento.id != null}" onclick="openModal('modalViagem')" class="btn-sm btn-add" title="Adicionar Viagem">+ Nova</button>
+                </div>
+
+                <ul class="item-list">
+                    <li th:if="${evento.id == null}" class="empty-msg">Selecione um evento salvo.</li>
+
+                    <li th:each="v : ${viagensDoEvento}"
+                        th:classappend="${viagemSelecionada != null && viagemSelecionada.id == v.id} ? 'active' : ''">
+
+                        <a class="item-link" th:href="@{/{idEv}/{idV}(idEv=${evento.id}, idV=${v.id})}">
+                            <span th:text="${v.id + ' - ' + (v.idVeiculo != null ? 'Veículo: ' + v.idVeiculo : 'Sem Veículo')}"></span>
+                        </a>
+
+                        <div class="item-actions">
+                            <a th:href="@{/viagens/editar/{id}(id=${v.id})}" title="Editar">✏️</a>
+                            <a th:href="@{/viagens/deletar/{id}(id=${v.id})}" title="Remover" onclick="return confirm('Excluir esta viagem?');">🗑️</a>
+                        </div>
+                    </li>
+
+                    <li th:if="${evento.id != null && #lists.isEmpty(viagensDoEvento)}" class="empty-msg">
+                        Nenhuma viagem cadastrada.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Passageiros</h3>
+                    <button type="button" th:if="${viagemSelecionada != null}" onclick="openModal('modalPassageiro')" class="btn-sm btn-add" title="Adicionar Passageiro">+ Novo</button>
+                </div>
+
+                <div th:if="${viagemSelecionada == null}" class="placeholder">
+                    <p>Selecione uma viagem ao lado</p>
+                </div>
+
+                <ul th:if="${viagemSelecionada != null}" class="item-list">
+                    <li th:each="p : ${passageirosDaViagem}">
+                        <div class="person-info">
+                            <strong th:text="${p.nome}"></strong>
+                            <small th:text="${p.cpf}"></small>
+                        </div>
+
+                        <div class="item-actions">
+                            <a th:href="@{/passageiros/editar/{id}(id=${p.id})}" title="Editar">✏️</a>
+                            <a th:href="@{/passageiros/deletar/{id}(id=${p.id})}" title="Remover" onclick="return confirm('Remover passageiro?');">🗑️</a>
+                        </div>
+                    </li>
+
+                    <li th:if="${#lists.isEmpty(passageirosDaViagem)}" class="empty-msg">
+                        Sem passageiros escalados.
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Transporte e Rota</h3>
+                    <div class="header-actions">
+                        <button th:if="${viagemSelecionada != null}" type="button" onclick="openModal('modalVincularVeiculo')" class="btn-sm btn-edit" title="Mudar Veículo">Vincular</button>
+                        <button type="button" onclick="openModal('modalViagem')" class="btn-sm btn-add" title="Editar Rota">✏️ Rota</button>
+                    </div>
+                </div>
+
+                <div th:if="${viagemSelecionada == null}" class="placeholder">
+                    <p>Selecione uma viagem para ver os detalhes do transporte.</p>
+                </div>
+
+                <div th:if="${viagemSelecionada != null}" class="details-container">
+
+                    <div class="detail-section">
+                        <h4 class="sub-title">📍 Itinerário</h4>
+                        <div class="route-info">
+                            <div class="route-step">
+                                <span class="dot origin"></span>
+                                <p><strong>Origem:</strong> <span th:text="${viagemSelecionada.localDeOrigem}"></span></p>
+                            </div>
+                            <div class="route-line"></div>
+                            <div class="route-step">
+                                <span class="dot destination"></span>
+                                <p><strong>Destino:</strong> <span th:text="${viagemSelecionada.localDeDestino}"></span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h4 class="sub-title">🚐 Veículo Escalado</h4>
+                        <div th:if="${veiculoSelecionado != null}" class="info-box">
+                            <div class="info-header">
+                                <span class="badge" th:text="${veiculoSelecionado.idPlaca}"></span>
+                                <strong th:text="${veiculoSelecionado.modelo}"></strong>
+                            </div>
+                            <p><small th:text="${veiculoSelecionado.marca + ' - ' + veiculoSelecionado.cor}"></small></p>
+                        </div>
+                        <div th:if="${veiculoSelecionado == null}" class="empty-msg-box">
+                            <p>Nenhum veículo vinculado.</p>
+                            <button type="button" onclick="openModal('modalVincularVeiculo')" class="link-action">Vincular agora</button>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <h4 class="sub-title">👤 Motorista Responsável</h4>
+                        <div th:if="${viagemSelecionada.idMotorista != null}" class="info-box">
+                            <strong th:text="${viagemSelecionada.idMotorista.nome + ' ' + viagemSelecionada.idMotorista.sobrenome}"></strong>
+                            <p><small th:text="'RG: ' + ${viagemSelecionada.idMotorista.rg} + ' | CPF: ' + ${viagemSelecionada.idMotorista.cpf}"></small></p>
+                        </div>
+                        <div th:if="${viagemSelecionada.idMotorista == null}" class="empty-msg-box">
+                            <p>Nenhum motorista designado.</p>
+                            <button type="button" onclick="openModal('modalMotorista')" class="link-action">+ Adicionar Motorista</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
     </section>
 </div>
 
+<!-- modals !-->
+<div id="modalViagem" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Nova Viagem</h3>
+            <button type="button" onclick="closeModal('modalViagem')" class="close-btn">&times;</button>
+        </div>
+        <form th:action="@{/viagens}" th:object="${novaViagem}" method="post">
+            <input th:if="${evento.id != null}" type="hidden" name="idEvento.id" th:value="${evento.id}" />
+
+            <div class="form-group">
+                <div class="label-with-btn">
+                    <label>Local de Origem:</label>
+                    <button type="button" class="btn-link" onclick="openModal('modalEndereco')">+ Novo Endereço</button>
+                </div>
+                <select name="localDeOrigem.id" required>
+                    <option value="">Selecione ou pesquise...</option>
+                    <option th:each="end : ${listaEnderecos}"
+                            th:value="${end.id}"
+                            th:text="${end.rua + ', ' + end.numero + ' - ' + end.cidade}">
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <div class="label-with-btn">
+                    <label>Local de Destino:</label>
+                    <button type="button" class="btn-link" onclick="openModal('modalEndereco')">+ Novo Endereço</button>
+                </div>
+                <select name="localDeDestino.id" required>
+                    <option value="">Selecione ou pesquise...</option>
+                    <option th:each="end : ${listaEnderecos}"
+                            th:value="${end.id}"
+                            th:text="${end.rua + ', ' + end.numero + ' - ' + end.cidade}">
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group half-width">
+                    <div class="label-with-btn">
+                        <label>Veículo:</label>
+                        <button type="button" class="btn-link" onclick="openModal('modalVeiculo')">+ Novo</button>
+                    </div>
+                    <select name="idVeiculo" required>
+                        <option value="">Selecione...</option>
+                        <option th:each="v : ${listaVeiculos}" th:value="${v.idPlaca}" th:text="${v.modelo}"></option>
+                    </select>
+                </div>
+
+                <div class="form-group half-width">
+                    <div class="label-with-btn">
+                        <label>Motorista:</label>
+                        <button type="button" class="btn-link" onclick="openModal('modalMotorista')">+ Novo</button>
+                    </div>
+                    <select name="idMotorista.id" required>
+                        <option value="">Selecione...</option>
+                        <option th:each="m : ${listaMotoristas}" th:value="${m.id}" th:text="${m.nome}"></option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-save" style="width: 100%;">Salvar Viagem</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div id="modalPassageiro" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Novo Passageiro</h3>
+            <button type="button" onclick="closeModal('modalPassageiro')" class="close-btn">&times;</button>
+        </div>
+        <form th:action="@{/passageiros}" th:object="${novoPassageiro}" method="post">
+            <input th:if="${viagemSelecionada != null}" type="hidden" name="idViagem.id" th:value="${viagemSelecionada.id}" />
+
+            <div class="form-group">
+                <label>Nome Completo:</label>
+                <input type="text" th:field="*{nome}" required>
+            </div>
+            <div class="form-group">
+                <label>CPF:</label>
+                <input type="text" th:field="*{cpf}" placeholder="Apenas números" required>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-save" style="width: 100%;">Adicionar Passageiro</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div id="modalVeiculo" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Cadastrar Veículo</h3>
+            <button type="button" onclick="closeModal('modalVeiculo')" class="close-btn">&times;</button>
+        </div>
+        <form th:action="@{/veiculos}" th:object="${novoVeiculo}" method="post">
+            <div class="form-group">
+                <label for="idPlaca">Placa:</label>
+                <input type="text" th:field="*{idPlaca}" placeholder="Ex: ABC1D23" maxlength="7" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group half-width">
+                    <label for="modelo">Modelo:</label>
+                    <input type="text" th:field="*{modelo}" required>
+                </div>
+                <div class="form-group half-width">
+                    <label for="marca">Marca:</label>
+                    <input type="text" th:field="*{marca}" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group half-width">
+                    <label for="ano">Ano:</label>
+                    <input type="number" th:field="*{ano}" required>
+                </div>
+                <div class="form-group half-width">
+                    <label for="cor">Cor:</label>
+                    <input type="text" th:field="*{cor}" required>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-save" style="width: 100%;">Salvar Veículo</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div id="modalVincularVeiculo" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Vincular Veículo à Viagem</h3>
+            <button type="button" onclick="closeModal('modalVincularVeiculo')" class="close-btn">&times;</button>
+        </div>
+
+        <form th:action="@{/viagens/vincular-veiculo}" method="post">
+            <input type="hidden" name="idViagem" th:value="${viagemSelecionada?.id}" />
+
+            <div class="form-group">
+                <label>Selecione um Veículo Cadastrado:</label>
+                <select name="idPlaca" class="form-control" required>
+                    <option value="">Escolha um veículo...</option>
+                    <option th:each="v : ${listaVeiculos}"
+                            th:value="${v.idPlaca}"
+                            th:text="${v.modelo + ' (' + v.idPlaca + ')'}"
+                            th:selected="${viagemSelecionada?.idVeiculo?.idPlaca == v.idPlaca}">
+                    </option>
+                </select>
+            </div>
+
+            <p class="info-text">Se o veículo não estiver na lista, use o botão "+ Novo" para cadastrá-lo primeiro.</p>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-save" style="width: 100%;">Confirmar Vínculo</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div id="modalMotorista" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Cadastrar Motorista</h3>
+            <button type="button" onclick="closeModal('modalMotorista')" class="close-btn">&times;</button>
+        </div>
+        <form th:action="@{/motoristas}" th:object="${novoMotorista}" method="post">
+
+            <div class="form-row">
+                <div class="form-group half-width">
+                    <label for="nomeMotorista">Nome:</label>
+                    <input type="text" id="nomeMotorista" th:field="*{nome}" placeholder="Nome" required>
+                </div>
+                <div class="form-group half-width">
+                    <label for="sobrenomeMotorista">Sobrenome:</label>
+                    <input type="text" id="sobrenomeMotorista" th:field="*{sobrenome}" placeholder="Sobrenome" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group half-width">
+                    <label for="rgMotorista">RG:</label>
+                    <input type="text" id="rgMotorista" th:field="*{rg}" placeholder="Apenas números" maxlength="9" required>
+                </div>
+                <div class="form-group half-width">
+                    <label for="cpfMotorista">CPF:</label>
+                    <input type="text" id="cpfMotorista" th:field="*{cpf}" placeholder="Apenas números" maxlength="11" required>
+                </div>
+            </div>
+
+            <p class="info-text">Após salvar, o motorista estará disponível para seleção no formulário de viagem.</p>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-save" style="width: 100%;">Salvar Motorista</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="modalEndereco" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Cadastrar Novo Endereço</h3>
+            <button type="button" onclick="closeModal('modalEndereco')" class="close-btn">&times;</button>
+        </div>
+        <form th:action="@{/enderecos}" th:object="${novoEndereco}" method="post">
+
+            <div class="form-group">
+                <label>Rua:</label>
+                <input type="text" th:field="*{rua}" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group half-width">
+                    <label>Número:</label>
+                    <input type="number" th:field="*{numero}" required>
+                </div>
+                <div class="form-group half-width">
+                    <label>UF:</label>
+                    <input type="text" th:field="*{uf}" maxlength="2" placeholder="Ex: SP" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group half-width">
+                    <label>Bairro:</label>
+                    <input type="text" th:field="*{bairro}" required>
+                </div>
+                <div class="form-group half-width">
+                    <label>Cidade:</label>
+                    <input type="text" th:field="*{cidade}" required>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-save" style="width: 100%;">Salvar Endereço</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openModal(id) {
+        document.getElementById(id).classList.add('active');
+    }
+    function closeModal(id) {
+        document.getElementById(id).classList.remove('active');
+    }
+    // Fecha o modal se o usuário clicar na área escura fora dele
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal-overlay')) {
+            event.target.classList.remove('active');
+        }
+    }
+
+    function toggleInput(type) {
+        const input = document.getElementById('input-' + type);
+        const select = document.getElementById('select-' + type);
+        const btn = event.target;
+
+        if (select.style.display === 'none' || select.style.display === '') {
+            select.style.display = 'block';
+            btn.innerText = 'Digitar Novo';
+        } else {
+            select.style.display = 'none';
+            btn.innerText = 'Selecionar Existente';
+        }
+    }
+
+    function fillInput(type) {
+        const input = document.getElementById('input-' + type);
+        const select = document.getElementById('select-' + type);
+        if (select.value) {
+            input.value = select.value;
+            // Opcional: esconde o select após escolher
+            toggleInput(type);
+        }
+    }
+</script>
 </body>
 </html>

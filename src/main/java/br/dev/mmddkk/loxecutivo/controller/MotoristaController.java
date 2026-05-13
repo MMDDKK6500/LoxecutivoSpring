@@ -44,7 +44,7 @@ public class MotoristaController {
         }
 
         motoristaRepository.save(motorista);
-        return new ModelAndView("redirect:/motoristas");
+        return new ModelAndView("redirect:/");
     }
 
     // ✅ EDITAR

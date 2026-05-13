@@ -49,7 +49,7 @@ public class EventoController {
 
         eventoRepository.save(evento);
 
-        return new ModelAndView("redirect:/eventos");
+        return new ModelAndView("redirect:/");
     }
 
     @GetMapping("/editar/{id}")
@@ -63,7 +63,7 @@ public class EventoController {
             return mv;
         }
 
-        return new ModelAndView("redirect:/eventos");
+        return new ModelAndView("redirect:/");
     }
 
     @PostMapping("/atualizar/{id}")
@@ -78,12 +78,12 @@ public class EventoController {
         evento.setId(id);
         eventoRepository.save(evento);
 
-        return new ModelAndView("redirect:/eventos  ");
+        return new ModelAndView("redirect:/");
     }
 
     @GetMapping("/deletar/{id}")
     public String deletar(@PathVariable Integer id) {
         eventoRepository.deleteById(id);
-        return "redirect:/eventos";
+        return "redirect:/";
     }
 }

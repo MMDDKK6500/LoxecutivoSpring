@@ -44,7 +44,7 @@ public class VeiculoController {
         }
 
         veiculoRepository.save(veiculo);
-        return new ModelAndView("redirect:/veiculos");
+        return new ModelAndView("redirect:/");
     }
 
     // ✅ EDITAR
@@ -58,7 +58,7 @@ public class VeiculoController {
             return mv;
         }
 
-        return new ModelAndView("redirect:/veiculos");
+        return new ModelAndView("redirect:/");
     }
 
     // ✅ ATUALIZAR
@@ -74,13 +74,13 @@ public class VeiculoController {
         veiculo.setIdPlaca(id);
         veiculoRepository.save(veiculo);
 
-        return new ModelAndView("redirect:/veiculos");
+        return new ModelAndView("redirect:/");
     }
 
     // ✅ DELETAR (simples → só redirect)
     @GetMapping("/deletar/{id}")
     public String deletar(@PathVariable String id) {
         veiculoRepository.deleteById(id);
-        return "redirect:/veiculos";
+        return "redirect:/";
     }
 }

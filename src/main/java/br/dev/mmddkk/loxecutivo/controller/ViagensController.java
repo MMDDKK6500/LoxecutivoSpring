@@ -1,5 +1,6 @@
 package br.dev.mmddkk.loxecutivo.controller;
 
+import br.dev.mmddkk.loxecutivo.model.Veiculo;
 import br.dev.mmddkk.loxecutivo.model.Viagens;
 import br.dev.mmddkk.loxecutivo.repository.*;
 import jakarta.validation.Valid;
@@ -48,15 +49,28 @@ public class ViagensController {
 
     // ✅ SALVAR NOVO
     @PostMapping
-    public ModelAndView salvar(@Valid @ModelAttribute Viagens viagens,
-                               BindingResult result) {
+    public ModelAndView salvar(@Valid @ModelAttribute Viagens viagens, BindingResult result) {
 
+        // 1. NOVA TRAVA DE SEGURANÇA: Se der erro, volta silenciosamente para o Dashboard
         if (result.hasErrors()) {
-            return new ModelAndView("viagens/form");
+            System.out.println("Erro de validação: " + result.getAllErrors()); // Apenas para te ajudar a debugar se precisar
+
+            String redirectUrl = "redirect:/";
+            if (viagens.getIdEvento() != null && viagens.getIdEvento().getId() != null) {
+                redirectUrl += viagens.getIdEvento().getId();
+            }
+            return new ModelAndView(redirectUrl);
         }
 
+        // 2. Salva normalmente
         viagensRepository.save(viagens);
-        return new ModelAndView("redirect:/viagens");
+
+        // 3. Volta para a página do evento recarregada
+        if (viagens.getIdEvento() != null && viagens.getIdEvento().getId() != null) {
+            return new ModelAndView("redirect:/" + viagens.getIdEvento().getId());
+        }
+
+        return new ModelAndView("redirect:/");
     }
 
     // ✅ EDITAR
@@ -94,5 +108,23 @@ public class ViagensController {
     public String deletar(@PathVariable Integer id) {
         viagensRepository.deleteById(id);
         return "redirect:/viagens";
+    }
+
+    @PostMapping("/vincular-veiculo")
+    public String vincularVeiculo(@RequestParam Integer idViagem, @RequestParam String idPlaca) {
+        // Busca a viagem e o veículo no banco
+        Viagens viagem = viagensRepository.findById(idViagem).orElseThrow();
+        Veiculo veiculo = veiculoRepository.findById(idPlaca).orElseThrow();
+
+        // Atualiza apenas o veículo
+        viagem.setIdVeiculo(veiculo.getIdPlaca());
+        viagensRepository.save(viagem);
+
+        // Redireciona mantendo o contexto do Evento e da Viagem na URL
+        String redirectUrl = "redirect:/";
+        if (viagem.getIdEvento() != null) {
+            redirectUrl += viagem.getIdEvento().getId() + "/" + viagem.getId();
+        }
+        return redirectUrl;
     }
 }
