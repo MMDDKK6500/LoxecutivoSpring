@@ -18,7 +18,7 @@ public class Evento {
     private String nome;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "id_endereco", nullable = false)
     private Endereco idEndereco;
 

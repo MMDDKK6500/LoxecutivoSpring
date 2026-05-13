@@ -1,90 +1,98 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" th:href="@{/css/style.css}">
-        <title>Navbar + Sidebar Layout</title>
-    </head>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <title>Gestão de Eventos</title>
+</head>
+<body>
 
-    <body>
+<!-- Sidebar -->
+<aside class="sidebar">
+    <h2 th:text="${evento.id} != null ? 'Editar Evento' : 'Novo Evento'">Gestão de Eventos</h2>
 
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <h2>Menu</h2>
+    <form class="evento-form" th:action="@{${evento.id} != null ? '/eventos/atualizar/' + ${evento.id} : '/eventos'}"
+          th:object="${evento}" method="post">
 
-        <form th:action="@{${evento.id} != null ? '/eventos/atualizar/' + ${evento.id} : '/eventos'}"
-              th:object="${evento}" method="post">
+        <!-- IDs Ocultos -->
+        <input type="hidden" th:field="*{id}" />
+        <input type="hidden" th:field="*{idEndereco.id}" />
 
-            <label for="nome">Nome:</label><br>
-            <input type="text" id="nome" th:field="*{nome}" required/>
-            <br>
-            <div th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>
-            <br>
+        <!-- Dados do Evento -->
+        <div class="form-group">
+            <label for="nome">Nome do Evento:</label>
+            <input type="text" id="nome" th:field="*{nome}" placeholder="Ex: Show de Rock" required/>
+            <span class="error-msg" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></span>
+        </div>
 
+        <h3 class="section-title">Endereço</h3>
 
-            <!-- Fazer funcionar ainda -->
-            <label for="idEndereco.rua">Rua:</label>
-            <br>
-            <input type="text" id="idEndereco.rua" th:field="*{idEndereco.rua}" required/>
-            <br>
-            <div th:if="${#fields.hasErrors('idEndereco.rua')}" th:errors="*{idEndereco.rua}"></div>
-            <br>
+        <div class="form-group">
+            <label for="rua">Rua:</label>
+            <input type="text" id="rua" th:field="*{idEndereco.rua}" placeholder="Nome da rua" required/>
+        </div>
 
-            <label for="idEndereco.numero">Número:</label>
-            <br>
-            <input type="number" id="idEndereco.numero" th:field="*{idEndereco.numero}" required/>
-            <br>
-            <div th:if="${#fields.hasErrors('idEndereco.numero')}" th:errors="*{idEndereco.numero}"></div>
-            <br>
-
-            <label for="idEndereco.bairro">Bairro:</label>
-            <br>
-            <input type="text" id="idEndereco.bairro" th:field="*{idEndereco.bairro}" required/>
-            <br>
-            <div th:if="${#fields.hasErrors('idEndereco.bairro')}" th:errors="*{idEndereco.bairro}"></div>
-            <br>
-
-            <label for="idEndereco.cidade">Cidade:</label>
-            <br>
-            <input type="text" id="idEndereco.cidade" th:field="*{idEndereco.cidade}" required/>
-            <br>
-            <div th:if="${#fields.hasErrors('idEndereco.cidade')}" th:errors="*{idEndereco.cidade}"></div>
-            <br>
-
-            <label for="idEndereco.uf">UF:</label>
-            <br>
-            <input type="text" id="idEndereco.uf" th:field="*{idEndereco.uf}" required/>
-            <br>
-            <div th:if="${#fields.hasErrors('idEndereco.uf')}" th:errors="*{idEndereco.uf}"></div>
-            <br>
-
-            <button type="submit">Salvar</button>
-        </form>
-
-
-
-    </aside>
-
-    <!-- Main Section -->
-    <div class="main">
-
-        <!-- Top Navbar -->
-        <nav class="navbar">
-            <div class="logo">MySite</div>
-
-            <div class="search-box">
-                <input type="text" placeholder="Search..." />
+        <div class="form-row">
+            <div class="form-group half-width">
+                <label for="numero">Número:</label>
+                <input type="number" id="numero" th:field="*{idEndereco.numero}" required/>
             </div>
-        </nav>
+            <div class="form-group half-width">
+                <label for="uf">UF:</label>
+                <input type="text" id="uf" th:field="*{idEndereco.uf}" maxlength="2" placeholder="Ex: SP" required/>
+            </div>
+        </div>
 
-        <!-- Content -->
-        <section class="content">
-            <h1>Welcome</h1>
-            <p>Your page content goes here.</p>
-        </section>
+        <div class="form-group">
+            <label for="bairro">Bairro:</label>
+            <input type="text" id="bairro" th:field="*{idEndereco.bairro}" required/>
+        </div>
 
+        <div class="form-group">
+            <label for="cidade">Cidade:</label>
+            <input type="text" id="cidade" th:field="*{idEndereco.cidade}" required/>
+        </div>
+
+        <!-- Botões -->
+        <div class="form-actions">
+            <button type="submit" class="btn btn-save">Salvar</button>
+            <a th:href="@{/}" class="btn btn-cancel">Cancelar</a>
+        </div>
+    </form>
+
+    <!-- Linha divisória -->
+    <hr class="divider">
+
+    <!-- NOVO: Seletor de Eventos -->
+    <div class="evento-selector">
+        <label for="listaEventos">Navegar pelos Eventos:</label>
+        <select id="listaEventos" onchange="location = this.value;">
+            <option value="/">✨ Criar Novo Evento</option>
+            <!-- O th:selected mantém selecionado o evento que você está editando no momento -->
+            <option th:each="ev : ${listaEventos}"
+                    th:value="@{/{id}(id=${ev.id})}"
+                    th:text="${ev.nome}"
+                    th:selected="${ev.id == evento.id}">
+            </option>
+        </select>
     </div>
 
-    </body>
+</aside>
+
+<!-- Main Section -->
+<div class="main">
+    <nav class="navbar">
+        <div class="logo">MySite</div>
+        <div class="search-box">
+            <input type="text" placeholder="Search..." />
+        </div>
+    </nav>
+    <section class="content">
+        <h1>Painel Principal</h1>
+        <p>Selecione um evento na barra lateral ou crie um novo.</p>
+    </section>
+</div>
+
+</body>
 </html>

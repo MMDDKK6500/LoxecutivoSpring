@@ -39,7 +39,7 @@ public class EventoController {
     }
 
     @PostMapping
-    public ModelAndView salvar(@Valid @ModelAttribute Evento evento, BindingResult result, @RequestParam("idEndereco") Integer idEndereco) {
+    public ModelAndView salvar(@Valid @ModelAttribute Evento evento, BindingResult result) {
 
         if (result.hasErrors()) {
             ModelAndView mv = new ModelAndView("evento/form");
@@ -47,8 +47,6 @@ public class EventoController {
             return mv;
         }
 
-        Endereco endereco = enderecoRepository.findById(idEndereco).orElseThrow();
-        evento.setIdEndereco(endereco);
         eventoRepository.save(evento);
 
         return new ModelAndView("redirect:/eventos");
@@ -69,7 +67,7 @@ public class EventoController {
     }
 
     @PostMapping("/atualizar/{id}")
-    public ModelAndView atualizar(@PathVariable Integer id, @Valid @ModelAttribute Evento evento, BindingResult result, @RequestParam("idEndereco") Integer idEndereco) {
+    public ModelAndView atualizar(@PathVariable Integer id, @Valid @ModelAttribute Evento evento, BindingResult result) {
 
         if (result.hasErrors()) {
             ModelAndView mv = new ModelAndView("evento/form");
@@ -77,12 +75,10 @@ public class EventoController {
             return mv;
         }
 
-        Endereco endereco = enderecoRepository.findById(idEndereco).orElseThrow();
-        evento.setIdEndereco(endereco);
         evento.setId(id);
         eventoRepository.save(evento);
 
-        return new ModelAndView("redirect:/eventos");
+        return new ModelAndView("redirect:/eventos  ");
     }
 
     @GetMapping("/deletar/{id}")

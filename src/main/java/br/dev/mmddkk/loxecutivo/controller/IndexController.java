@@ -36,9 +36,10 @@ public class IndexController {
             evento = eventoRepository.findById(id.get()).orElse(new Evento());
         } else {
             evento = new Evento();
+            evento.setIdEndereco(new Endereco());
         }
-        mv.addObject("enderecos", new Endereco());
 
+        mv.addObject("listaEventos", eventoRepository.findAll());
         mv.addObject("evento", evento);
         return mv;
     }
