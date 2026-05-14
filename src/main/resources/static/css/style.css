@@ -14,7 +14,7 @@ body {
 
 /* --- SIDEBAR --- */
 .sidebar {
-  width: 340px;
+  width: 20vw;
   background-color: #ffffff;
   border-right: 1px solid #e0e4e8;
   padding: 25px 20px;
@@ -27,6 +27,12 @@ body {
 .sidebar h2 {
   color: #2c3e50;
   font-size: 1.4rem;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.sidebar h1 {
+  color: #2c3e50;
   margin-bottom: 25px;
   text-align: center;
 }
@@ -201,7 +207,6 @@ body {
   text-decoration: none;
   color: #4a5568;
   padding: 12px 8px;
-  display: flex;
   justify-content: space-between;
   transition: background 0.2s;
 }
@@ -427,16 +432,14 @@ body {
 }
 
 .btn-link {
-  flex: 1;
-  padding: 10px;
+  background: none;
   border: none;
-  border-radius: 6px;
-  font-weight: 600;
-  text-align: center;
+  color: #3498db;
+  font-size: 0.75rem;
+  font-weight: bold;
   cursor: pointer;
-  text-decoration: none;
-  transition: background-color 0.3s;
-}
+  text-decoration: underline;
+  padding: 0;}
 
 .btn-link:hover {
   color: #2980b9;
@@ -533,4 +536,8 @@ section {
   min-height: 93vh;
   display: flex;
   flex-direction: column;
+}
+
+.item-actions a {
+  cursor: pointer;
 }

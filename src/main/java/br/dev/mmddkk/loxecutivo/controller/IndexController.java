@@ -36,25 +36,20 @@ public class IndexController {
 
         ModelAndView mv = new ModelAndView("index");
 
-        // 1. Pega o Evento atual
         Evento eventoAtivo = idEvento.flatMap(eventoRepository::findById).orElse(new Evento());
         if (eventoAtivo.getIdEndereco() == null) eventoAtivo.setIdEndereco(new Endereco());
 
-        // 2. LÓGICA NOVA: Se o evento já existe no banco, busca as viagens dele
         if (eventoAtivo.getId() != null) {
             List<Viagens> viagensDoEvento = viagensRepository.findByIdEvento(eventoAtivo);
-            mv.addObject("viagensDoEvento", viagensDoEvento); // Envia para o HTML
+            mv.addObject("viagensDoEvento", viagensDoEvento);
         }
 
-        // 3. Pega a Viagem Selecionada (se houver)
         if (idViagem.isPresent()) {
                 viagensRepository.findById(idViagem.get()).ifPresent(v -> {
                     mv.addObject("viagemSelecionada", v);
 
-                    // NOVA LINHA: Busca os passageiros da viagem no banco de forma segura
                     mv.addObject("passageirosDaViagem", passageiroRepository.findByIdViagem(v));
 
-                    // Busca o veículo completo baseado na placa (que já tínhamos feito)
                     if (v.getIdVeiculo() != null && !v.getIdVeiculo().isEmpty()) {
                         veiculoRepository.findById(v.getIdVeiculo()).ifPresent(veiculo ->
                                 mv.addObject("veiculoSelecionado", veiculo)
@@ -73,9 +68,9 @@ public class IndexController {
         mv.addObject("novoMotorista", new Motorista());
         mv.addObject("novoEndereco", new Endereco());
 
-        // 5. Listas necessárias para os selects do formulário de Viagem
+
         mv.addObject("listaVeiculos", veiculoRepository.findAll());
-        mv.addObject("listaMotoristas", motoristaRepository.findAll()); // Assumindo que você injetou o motoristaRepository
+        mv.addObject("listaMotoristas", motoristaRepository.findAll());
         mv.addObject("listaEnderecos", enderecoRepository.findAll());
 
         mv.addObject("evento", eventoAtivo);

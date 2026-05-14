@@ -27,7 +27,6 @@ public class ViagensController {
     @Autowired
     private EventoRepository eventoRepository;
 
-    // ✅ LISTAR
     @GetMapping
     public ModelAndView listar() {
         ModelAndView mv = new ModelAndView("viagens/lista");
@@ -35,7 +34,6 @@ public class ViagensController {
         return mv;
     }
 
-    // ✅ FORMULÁRIO DE CRIAÇÃO
     @GetMapping("/novo")
     public ModelAndView novo() {
         ModelAndView mv = new ModelAndView("viagens/form");
@@ -47,13 +45,11 @@ public class ViagensController {
         return mv;
     }
 
-    // ✅ SALVAR NOVO
     @PostMapping
     public ModelAndView salvar(@Valid @ModelAttribute Viagens viagens, BindingResult result) {
 
-        // 1. NOVA TRAVA DE SEGURANÇA: Se der erro, volta silenciosamente para o Dashboard
         if (result.hasErrors()) {
-            System.out.println("Erro de validação: " + result.getAllErrors()); // Apenas para te ajudar a debugar se precisar
+            System.out.println("Erro de validação: " + result.getAllErrors());
 
             String redirectUrl = "redirect:/";
             if (viagens.getIdEvento() != null && viagens.getIdEvento().getId() != null) {
@@ -62,10 +58,8 @@ public class ViagensController {
             return new ModelAndView(redirectUrl);
         }
 
-        // 2. Salva normalmente
         viagensRepository.save(viagens);
 
-        // 3. Volta para a página do evento recarregada
         if (viagens.getIdEvento() != null && viagens.getIdEvento().getId() != null) {
             return new ModelAndView("redirect:/" + viagens.getIdEvento().getId());
         }
@@ -73,7 +67,6 @@ public class ViagensController {
         return new ModelAndView("redirect:/");
     }
 
-    // ✅ EDITAR
     @GetMapping("/editar/{id}")
     public ModelAndView editar(@PathVariable Integer id) {
         Optional<Viagens> viagensOpt = viagensRepository.findById(id);
@@ -87,7 +80,6 @@ public class ViagensController {
         return new ModelAndView("redirect:/viagens");
     }
 
-    // ✅ ATUALIZAR
     @PostMapping("/atualizar/{id}")
     public ModelAndView atualizar(@PathVariable Integer id,
                                   @Valid @ModelAttribute Viagens viagens,
@@ -103,7 +95,6 @@ public class ViagensController {
         return new ModelAndView("redirect:/viagens");
     }
 
-    // ✅ DELETAR (simples → só redirect)
     @GetMapping("/deletar/{id}")
     public String deletar(@PathVariable Integer id) {
         viagensRepository.deleteById(id);

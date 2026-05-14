@@ -11,7 +11,8 @@
 
 <!-- Sidebar -->
 <aside class="sidebar">
-    <h2 th:text="${evento.id} != null ? 'Editar Evento' : 'Novo Evento'">Gestão de Eventos</h2>
+    <h1>Loxecutivo</h1>
+    <h2 th:if="${evento.id} == null">Novo evento</h2>
 
     <form class="evento-form" th:action="@{${evento.id} != null ? '/eventos/atualizar/' + ${evento.id} : '/eventos'}"
           th:object="${evento}" method="post">
@@ -75,7 +76,7 @@
     <div class="evento-selector">
         <label for="listaEventos">Navegar pelos Eventos:</label>
         <select id="listaEventos" onchange="location = this.value;">
-            <option value="/">✨ Criar Novo Evento</option>
+            <option value="/">Criar Novo Evento</option>
             <option th:each="ev : ${listaEventos}"
                     th:value="@{/{id}(id=${ev.id})}"
                     th:text="${ev.nome}"
@@ -89,7 +90,7 @@
 <!-- Main Section -->
 <div class="main">
     <nav class="navbar">
-        <div class="logo">MySite</div>
+        <div class="logo">Loxecutivo</div>
     </nav>
 
     <section class="content">
@@ -106,18 +107,17 @@
                 <ul class="item-list">
                     <li th:if="${evento.id == null}" class="empty-msg">Selecione um evento salvo.</li>
 
-                    <li th:each="v : ${viagensDoEvento}"
-                        th:classappend="${viagemSelecionada != null && viagemSelecionada.id == v.id} ? 'active' : ''">
+                    <li th:each="viagem : ${viagensDoEvento}"
+                        th:classappend="${viagemSelecionada != null && viagemSelecionada.id == viagem.id} ? 'active' : ''">
 
-                        <a class="item-link" th:href="@{/{idEv}/{idV}(idEv=${evento.id}, idV=${v.id})}">
-                            <span th:text="${v.id + ' - ' + (v.idVeiculo != null ? 'Veículo: ' + v.idVeiculo : 'Sem Veículo')}"></span>
+                        <a class="item-link" th:href="@{/{idEv}/{idVeiculo}(idEv=${evento.id}, idVeiculo=${viagem.id})}">
+                            <p>Veículo: <strong><span th:text="${viagem.idVeiculo}"></span></strong></p>
+                            <br>
+                            <p>Motorista: <strong><span th:text="${viagem.idMotorista.nome + ' ' + viagem.idMotorista.sobrenome}"></span></strong></p>
                         </a>
 
                         <div class="item-actions">
-                            <a th:href="@{/viagens/editar/{id}(id=${v.id})}" title="Editar">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <a th:href="@{/viagens/deletar/{id}(id=${v.id})}" title="Remover" onclick="return confirm('Excluir esta viagem?');">
+                            <a th:href="@{/viagens/deletar/{id}(id=${viagem.id})}" title="Remover" onclick="return confirm('Excluir esta viagem?');">
                                 <i class="fas fa-trash-alt"></i>
                             </a>
                         </div>
@@ -144,7 +144,7 @@
                 <ul th:if="${viagemSelecionada != null}" class="item-list">
                     <li th:each="p : ${passageirosDaViagem}">
                         <div class="person-info">
-                            <strong th:text="${p.nome}"></strong>
+                            <strong th:text="${p.nome + ' ' + p.sobrenome}"></strong>
                             <small th:text="${p.cpf}"></small>
                         </div>
 
@@ -244,29 +244,65 @@
             <div class="form-group">
                 <div class="label-with-btn">
                     <label>Local de Origem:</label>
-                    <button type="button" class="btn-link" onclick="openModal('modalEndereco')">+ Novo Endereço</button>
                 </div>
-                <select name="localDeOrigem.id" required>
-                    <option value="">Selecione ou pesquise...</option>
-                    <option th:each="end : ${listaEnderecos}"
-                            th:value="${end.id}"
-                            th:text="${end.rua + ', ' + end.numero + ' - ' + end.cidade}">
-                    </option>
-                </select>
+                <div class="form-row">
+                    <div class="form-group half-width">
+                        <label>Rua:</label>
+                        <input type="text" th:field="*{localDeOrigem.rua}" class="form-control" placeholder="Nome da rua" required>
+                    </div>
+                    <div class="form-group half-width">
+                        <label>Número:</label>
+                        <input type="number" th:field="*{localDeOrigem.numero}" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group half-width">
+                        <label>Bairro:</label>
+                        <input type="text" th:field="*{localDeOrigem.bairro}" class="form-control" required>
+                    </div>
+                    <div class="form-group half-width">
+                        <label>Cidade:</label>
+                        <input type="text" th:field="*{localDeOrigem.cidade}" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>UF:</label>
+                    <input type="text" th:field="*{localDeOrigem.uf}" class="form-control" maxlength="2" placeholder="Ex: SP" required>
+                </div>
             </div>
 
             <div class="form-group">
                 <div class="label-with-btn">
                     <label>Local de Destino:</label>
-                    <button type="button" class="btn-link" onclick="openModal('modalEndereco')">+ Novo Endereço</button>
                 </div>
-                <select name="localDeDestino.id" required>
-                    <option value="">Selecione ou pesquise...</option>
-                    <option th:each="end : ${listaEnderecos}"
-                            th:value="${end.id}"
-                            th:text="${end.rua + ', ' + end.numero + ' - ' + end.cidade}">
-                    </option>
-                </select>
+                <div class="form-row">
+                    <div class="form-group half-width">
+                        <label>Rua:</label>
+                        <input type="text" th:field="*{localDeDestino.rua}" class="form-control" placeholder="Nome da rua" required>
+                    </div>
+                    <div class="form-group half-width">
+                        <label>Número:</label>
+                        <input type="number" th:field="*{localDeDestino.numero}" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group half-width">
+                        <label>Bairro:</label>
+                        <input type="text" th:field="*{localDeDestino.bairro}" class="form-control" required>
+                    </div>
+                    <div class="form-group half-width">
+                        <label>Cidade:</label>
+                        <input type="text" th:field="*{localDeDestino.cidade}" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>UF:</label>
+                    <input type="text" th:field="*{localDeDestino.uf}" class="form-control" maxlength="2" placeholder="Ex: SP" required>
+                </div>
             </div>
 
             <div class="form-row">
@@ -383,39 +419,6 @@
     </div>
 </div>
 
-
-<div id="modalVincularVeiculo" class="modal-overlay">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>Vincular Veículo à Viagem</h3>
-            <button type="button" onclick="closeModal('modalVincularVeiculo')" class="close-btn">&times;</button>
-        </div>
-
-        <form th:action="@{/viagens/vincular-veiculo}" method="post">
-            <input type="hidden" name="idViagem" th:value="${viagemSelecionada?.id}" />
-
-            <div class="form-group">
-                <label>Selecione um Veículo Cadastrado:</label>
-                <select name="idPlaca" class="form-control" required>
-                    <option value="">Escolha um veículo...</option>
-                    <option th:each="v : ${listaVeiculos}"
-                            th:value="${v.idPlaca}"
-                            th:text="${v.modelo + ' (' + v.idPlaca + ')'}"
-                            th:selected="${viagemSelecionada?.idVeiculo == v.idPlaca}">
-                    </option>
-                </select>
-            </div>
-
-            <p class="info-text">Se o veículo não estiver na lista, use o botão "+ Novo" para cadastrá-lo primeiro.</p>
-
-            <div class="form-actions">
-                <button type="submit" class="btn btn-save" style="width: 100%;">Confirmar Vínculo</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-
 <div id="modalMotorista" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-header">
@@ -511,28 +514,9 @@
         }
     }
 
-    function toggleInput(type) {
-        const input = document.getElementById('input-' + type);
-        const select = document.getElementById('select-' + type);
-        const btn = event.target;
 
-        if (select.style.display === 'none' || select.style.display === '') {
-            select.style.display = 'block';
-            btn.innerText = 'Digitar Novo';
-        } else {
-            select.style.display = 'none';
-            btn.innerText = 'Selecionar Existente';
-        }
-    }
+    function cpf(cpf) {
 
-    function fillInput(type) {
-        const input = document.getElementById('input-' + type);
-        const select = document.getElementById('select-' + type);
-        if (select.value) {
-            input.value = select.value;
-            // Opcional: esconde o select após escolher
-            toggleInput(type);
-        }
     }
 </script>
 </body>

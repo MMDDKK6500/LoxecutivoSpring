@@ -54,7 +54,7 @@ public class PassageiroController {
         Viagens viagemCompleta = viagensRepository.findById(passageiro.getIdViagem().getId())
                 .orElseThrow(() -> new RuntimeException("Viagem não encontrada"));
 
-        // 3. Agora você tem acesso ao ID do Evento com segurança
+        // 3. Agora você tem acesso aloo ID do Evento com segurança
         int eventoId = viagemCompleta.getIdEvento().getId();
         int viagemId = viagemCompleta.getId();
 
